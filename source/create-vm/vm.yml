@@ -1,0 +1,72 @@
+- hosts: 127.0.0.1
+  connection: local
+  become: root
+  gather_facts: false
+  serial: 1
+  tasks:
+    - name:  Create Master Nodes
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ datacenter }}"
+        state: present
+        folder: "{{ folder }}"
+        template: "{{ template }}"
+        name: "{{ item.key }}"
+        cluster: "{{ cluster }}"
+        disk:
+          - size_gb: 30
+            type: thin
+            datastore: datastore1
+        hardware:
+          memory_mb: 2048
+          num_cpus: 2
+          scsi: paravirtual
+        networks:
+          - name: VM Network
+            ip: "{{ item.value }}"
+            netmask: 255.255.255.0
+            gateway: 192.168.1.1
+        wait_for_ip_address: True
+        customization:
+          dns_servers:
+            - 202.102.192.68
+            - 114.114.114.114
+      with_dict: "{{ masters }}"
+      delegate_to: localhost
+
+
+    - name:  Create Workder Nodes
+      vmware_guest:
+        hostname: "{{ vcenter_hostname }}"
+        username: "{{ vcenter_username }}"
+        password: "{{ vcenter_password }}"
+        validate_certs: no
+        datacenter: "{{ datacenter }}"
+        state: present
+        folder: "{{ folder }}"
+        template: "{{ template }}"
+        name: "{{ item.key }}"
+        cluster: "{{ cluster }}"
+        disk:
+          - size_gb: 50
+            type: thin
+            datastore: datastore1
+        hardware:
+          memory_mb: 8192
+          num_cpus: 4
+          scsi: paravirtual
+        networks:
+          - name: VM Network
+            ip: "{{ item.value }}"
+            netmask: 255.255.255.0
+            gateway: 192.168.1.1
+        wait_for_ip_address: True
+        customization:
+          dns_servers:
+            - 202.102.192.68
+            - 114.114.114.114
+      with_dict: "{{ workers }}"
+      delegate_to: localhost

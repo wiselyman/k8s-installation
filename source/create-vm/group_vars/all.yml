@@ -1,0 +1,11 @@
+---
+vcenter_hostname: 192.168.1.51
+vcenter_username: administrator@vsphere.local
+vcenter_password: Wyf.38476
+datacenter: Datacenter
+folder: /k8s
+template: centos7
+vm_name: master1
+cluster:
+masters: {"master1":"192.168.1.54", "matser2":"192.168.1.55","master3":"192.168.1.56"}
+workers: {"node1":"192.168.1.57","node2":"192.168.1.58","node3":"192.168.1.59","node4":"192.168.1.60","node5":"192.168.1.61","node6":"192.168.1.62"}
